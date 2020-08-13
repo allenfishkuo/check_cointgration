@@ -160,14 +160,14 @@ def check_coint(stock,stock1,stock2):
         return data
    
     else: 
-         print("無共整合關係")
+         #print("無共整合關係")
          return 0
      
 if __name__ == "__main__": 
     datelist = [f.split('_')[0] for f in os.listdir(path_to_average)]
     
     for date in sorted(datelist):
-        if date == "20160104":
+        if date[:6] == "201601":
             day1 = pd.read_csv(path_to_average+date+ext_of_average).drop([266,267,268,269,270])
             #print(day1)
             day1 = day1.drop(index=np.arange(0,16,1)) ; day1.index = np.arange(0,len(day1),1)  
@@ -175,11 +175,14 @@ if __name__ == "__main__":
             for pairs in range(len(all_pairs)):
                 stock_number1, stock_number2 = all_pairs[pairs][0], all_pairs[pairs][1]
                 # formation period and trading period -----------------------------------------------------------------------------------------------------------           
-                high_stock = np.array(np.where(day1.iloc[0,:] > 1000 )).T            
+                high_stock = np.array(np.where(day1.iloc[0,:] > 1000 )).T
+                #print(high_stock)
                 name = day1.columns.values.tolist()            
                 for stock in high_stock:            
                     day1.drop(columns = str(name[int(stock)]) , inplace = True ) 
-                
+                #print(stock_number1,stock_number2)
+                if stock_number1 =="3008" or stock_number2 =="3008":
+                    continue
                 stock = day1[[stock_number1,stock_number2]]
                 #print(stock)
                 data = check_coint(stock,stock_number1,stock_number2)

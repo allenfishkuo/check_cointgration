@@ -18,24 +18,25 @@ import matplotlib.pyplot as plt
 from sklearn import manifold, datasets
 sc = MinMaxScaler()
 def cluster_pairs(date):
-    df = pd.read_csv('20160104_5min_moving_stock_return_series.csv')#53*148
+    df = pd.read_csv('./return_series_5min_move/'+str(date)+'_5min_moving_stock_return_series.csv')#53*148
      #sklearn API 預期的輸入維度為 (n_samples, n_features)
      
-    print('shape:',df.shape) # 53*148
+    #print('shape:',df.shape) # 53*148
     pca_component = 2
     pca = PCA(n_components= pca_component)
     pca.fit(df.T)
     df1_pca = pca.transform(df.T)
     
-    print('explained_variance_ratio_',pca.explained_variance_ratio_)
+   # print('explained_variance_ratio_',pca.explained_variance_ratio_)
     
     #plt.figure()
+    """
     plt.plot(range(pca_component),pca.explained_variance_ratio_*100,'o')
     plt.xlabel('dimensions')
     plt.ylabel('(%)')
     plt.title('explained_variance_ratio_')
     plt.show()
-    
+    """
     
     df1_pca=df1_pca.T #5*148
     df2=pd.DataFrame(df1_pca)
@@ -100,7 +101,7 @@ def cluster_pairs(date):
                 cluster =np.append(cluster,col[j])
         #print("number:{} cluster:{}".format(i+1,cluster))
         all_pair.extend(list(combinations(cluster,2)))
-    print(all_pair)
+    #print(all_pair)
     return all_pair
     
     
