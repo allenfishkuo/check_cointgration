@@ -15,6 +15,7 @@ from scipy.stats import skew
 import ADF
 import math
 import os
+import PCA_5_min
 
 path_to_average = "./2016/averageprice/"
 ext_of_average = "_averagePrice_min.csv"
@@ -113,11 +114,12 @@ def check_coint(stock,stock1,stock2):
     for j in range(1):    # 一天建模??次               
         day1_1 = stock.iloc[(trade_time * j) : (formate_time + (trade_time * j)),:]                
         day1_1.index  = np.arange(0,len(day1_1),1)
-    #print(type(day1_1))
+    #print(day1_1)
     unitroot_stock = ADF.adf.drop_stationary(ADF.adf(day1_1))
-    print(unitroot_stock)
+    if unitroot_stock.shape[1] < 2:
+        return 0
     x = find_pairs( stock1 , stock2 , unitroot_stock )
-    print(x)
+    #print(x)
     x = list(x)
     if len(x[0])!= 0:
         total = abs(x[0][0][0]) + abs(x[0][0][1])
@@ -159,29 +161,29 @@ def check_coint(stock,stock1,stock2):
    
     else: 
          print("無共整合關係")
+         return 0
      
 if __name__ == "__main__": 
     datelist = [f.split('_')[0] for f in os.listdir(path_to_average)]
-    #print(datelist)
-    #stock_number1 = input("輸入股票代號1:")
-    #stock_number2 = input("輸入股票代號2:")
-    stock_number1 = "1301"
-    stock_number2= "4904"
+    
     for date in sorted(datelist):
         if date == "20160104":
             day1 = pd.read_csv(path_to_average+date+ext_of_average).drop([266,267,268,269,270])
             #print(day1)
             day1 = day1.drop(index=np.arange(0,16,1)) ; day1.index = np.arange(0,len(day1),1)  
+            all_pairs = PCA_5_min.cluster_pairs(date)
+            for pairs in range(len(all_pairs)):
+                stock_number1, stock_number2 = all_pairs[pairs][0], all_pairs[pairs][1]
+                # formation period and trading period -----------------------------------------------------------------------------------------------------------           
+                high_stock = np.array(np.where(day1.iloc[0,:] > 1000 )).T            
+                name = day1.columns.values.tolist()            
+                for stock in high_stock:            
+                    day1.drop(columns = str(name[int(stock)]) , inplace = True ) 
                 
-            # formation period and trading period -----------------------------------------------------------------------------------------------------------           
-            high_stock = np.array(np.where(day1.iloc[0,:] > 1000 )).T            
-            name = day1.columns.values.tolist()            
-            for stock in high_stock:            
-                day1.drop(columns = str(name[int(stock)]) , inplace = True ) 
-            
-            stock = day1[[stock_number1,stock_number2]]
-            #print(stock)
-            data = check_coint(stock,stock_number1,stock_number2)
+                stock = day1[[stock_number1,stock_number2]]
+                #print(stock)
+                data = check_coint(stock,stock_number1,stock_number2)
+                #print(data)
             #flag = os.path.isfile(path+path_compare+str(date)+'_table.csv')
         """
         if not flag :
@@ -189,4 +191,4 @@ if __name__ == "__main__":
         else :
             df.to_csv(path+path_compare+str(date)+'_ground truth.csv', mode='a', header=False,index=False)
         """
-        print("ZZ")
+
