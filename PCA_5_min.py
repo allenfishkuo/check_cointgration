@@ -88,6 +88,7 @@ def cluster_pairs(date):
     plt.show()'''
     name = ['{}'.format(name) for name in df.columns]
     col = ['{}'.format(name) for name in df.columns]
+    #print("name :",col)
     
     #print(labels)
     clust1=[]

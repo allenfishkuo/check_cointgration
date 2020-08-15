@@ -25,9 +25,10 @@ print(datelist[0])
 dateist1 = [datelist[0]]
 
 for date in sorted(datelist):
-    
     df = pd.read_csv(path_to_minprice+date+ext_of_minprice)
+    print(df.columns)
     df=df.pct_change()#對row做運算
     df.dropna(inplace=True)
+    df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
     df.to_csv(path_to_5minprice+date+ext_of_5minprice,index = False)
     

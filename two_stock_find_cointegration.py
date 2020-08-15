@@ -20,7 +20,7 @@ import PCA_5_min
 path_to_average = "./2016/averageprice/"
 ext_of_average = "_averagePrice_min.csv"
 
-path_compare = "/2016_table/"
+path_compare = "./cluster_table/"
 path = os.getcwd()
 
 def find_pairs( i , n , min_price ):
@@ -146,32 +146,31 @@ def check_coint(stock,stock1,stock2):
                 std.append( np.std(y) )
                 ske.append( skew(y) )
         x.extend([ave,std,ske])
-        c={"weight1" : weight1_std,
+        c={"stock1" : x[1][0][0],
+           "stock2" : x[1][0][1],
+           "weight1" : weight1_std,
            "weight2" : weight2_std,
-           "stock_number1" : x[1][0][0],
-           "stock_number2" : x[1][0][1],
            "model":x[2],
            "p_val":x[3],
            "mean":x[4],
            "std":x[5],
            "skewness":x[6]}
         data=pd.DataFrame(c)#将字典转换成为数据框
-        print(data)
+        #print(data)
         return data
    
     else: 
-         #print("無共整合關係")
-         return 0
+        return 0
      
 if __name__ == "__main__": 
     datelist = [f.split('_')[0] for f in os.listdir(path_to_average)]
     
     for date in sorted(datelist):
-        if date[:6] == "201601":
             day1 = pd.read_csv(path_to_average+date+ext_of_average).drop([266,267,268,269,270])
-            #print(day1)
+            print(date)
             day1 = day1.drop(index=np.arange(0,16,1)) ; day1.index = np.arange(0,len(day1),1)  
             all_pairs = PCA_5_min.cluster_pairs(date)
+            #print(all_pairs)
             for pairs in range(len(all_pairs)):
                 stock_number1, stock_number2 = all_pairs[pairs][0], all_pairs[pairs][1]
                 # formation period and trading period -----------------------------------------------------------------------------------------------------------           
@@ -187,11 +186,11 @@ if __name__ == "__main__":
                 #print(stock)
                 data = check_coint(stock,stock_number1,stock_number2)
                 #print(data)
-            #flag = os.path.isfile(path+path_compare+str(date)+'_table.csv')
-        """
-        if not flag :
-            df.to_csv(path+path_compare+str(date)+'_ground truth.csv', mode='w',index=False)
-        else :
-            df.to_csv(path+path_compare+str(date)+'_ground truth.csv', mode='a', header=False,index=False)
-        """
+                if isinstance(data, pd.DataFrame):
+                    flag = os.path.isfile(path+path_compare+str(date)+'_table.csv')                
+                    if not flag :
+                        data.to_csv(path+path_compare+str(date)+'_table.csv', mode='w',index=False)
+                    else :
+                        data.to_csv(path+path_compare+str(date)+'_table.csv', mode='a', header=False,index=False)
+        
 
