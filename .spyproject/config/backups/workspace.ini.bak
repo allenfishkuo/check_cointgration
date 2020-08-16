@@ -6,5 +6,5 @@ save_non_project_files = False
 
 [main]
 version = 0.2.0
-recent_files = ['..\\.spyder-py3\\temp.py', 'practice20200806.py', '..\\Downloads\\practice20200806 (1).py', '..\\Downloads\\trading.py', 'ADF.py', 'two_stock_find_cointegration.py', 'PCA_5_min.py', 'return_series.py', '5min.py']
+recent_files = ['two_stock_find_cointegration.py', 'PCA_5_min.py', 'return_series.py', '5min.py']
 
